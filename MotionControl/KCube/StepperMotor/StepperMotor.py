@@ -16,10 +16,10 @@ class KCubeStepperMotor(KinesisDevice):
         return ffi.string(buffer).decode("utf-8").split(",")[:-1]
 
     def open_connection(self):
-        check_error_code(lib.SCC_Open)(self._serial_buffer)
+        check_error_code(lib.SCC_Open, self._serial_buffer)
 
     def close_connection(self):
-        check_error_code(lib.SCC_Open)(self._serial_buffer)
+        check_error_code(lib.SCC_Open, self._serial_buffer)
 
     def check_connection(self) -> bool:
         return lib.SCC_CheckConnection(self._serial_buffer)
@@ -31,7 +31,7 @@ class KCubeStepperMotor(KinesisDevice):
         return lib.SCC_StartPolling(self._serial_buffer, millies)
 
     def stop_polling(self):
-        check_error_code(lib.SCC_StopPolling)(self._serial_buffer)
+        check_error_code(lib.SCC_StopPolling, self._serial_buffer)
 
     def get_polling_duration(self) -> int:
         return lib.SCC_PollingDuration(self._serial_buffer)
@@ -43,8 +43,9 @@ class KCubeStepperMotor(KinesisDevice):
 
     def get_hardware_info(self) -> HardwareInfo:
         info = ffi.new("TLI_HardwareInformation *")
-        check_error_code(lib.SCC_GetHardwareInfoBlock
-                        )(self._serial_buffer, info)
+        check_error_code(
+            lib.SCC_GetHardwareInfoBlock, self._serial_buffer, info
+        )
         return HardwareInfo(
             info.serialNumber,
             info.modelNumber[0].decode("utf-8"),
@@ -89,19 +90,19 @@ class KCubeStepperMotor(KinesisDevice):
         return lib.SCC_PersistSettings(self._serial_buffer)
 
     def disable_channel(self):
-        check_error_code(lib.SCC_DisableChannel)(self._serial_buffer)
+        check_error_code(lib.SCC_DisableChannel, self._serial_buffer)
 
     def enable_channel(self):
-        check_error_code(lib.SCC_EnableChannel)(self._serial_buffer)
+        check_error_code(lib.SCC_EnableChannel, self._serial_buffer)
 
     def get_number_positions(self) -> int:
         return lib.SCC_GetNumberPositions(self._serial_buffer)
 
     def move_to_position(self, index: int):
-        check_error_code(lib.SCC_MoveToPosition)(self._serial_buffer, index)
+        check_error_code(lib.SCC_MoveToPosition, self._serial_buffer, index)
 
     def request_position(self):
-        check_error_code(lib.SCC_RequestPosition)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestPosition, self._serial_buffer)
 
     def get_position(self) -> int:
         return lib.SCC_GetPosition(self._serial_buffer)
@@ -113,22 +114,23 @@ class KCubeStepperMotor(KinesisDevice):
         return lib.SCC_CanMoveWithoutHomingFirst(self._serial_buffer)
 
     def home(self):
-        check_error_code(lib.SCC_Home)(self._serial_buffer)
+        check_error_code(lib.SCC_Home, self._serial_buffer)
 
     def register_message_callback(self, fct: Callable[[], None]):
         global _message_callback
-        _message_callback = ffi.def_extern(fct)(name="message_callback")
+        _message_callback = ffi.def_extern(fct, name="message_callback")
         lib.SCC_RegisterMessageCallback(
             self._serial_buffer, lib.message_callback
         )
 
     def request_homing_params(self):
-        check_error_code(lib.SCC_RequestHomingParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestHomingParams, self._serial_buffer)
 
     def get_homing_params(self) -> HomingParameters:
         params = ffi.new("MOT_HomingParameters *")
-        check_error_code(lib.SCC_GetHomingParamsBlock
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.SCC_GetHomingParamsBlock, self._serial_buffer, params
+        )
 
         return HomingParameters(
             TravelDirection(params.direction),
@@ -148,18 +150,19 @@ class KCubeStepperMotor(KinesisDevice):
         p.velocity = params.velocity
         p.offsetDistance = params.offset_distance
 
-        check_error_code(lib.SCC_SetHomingParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.SCC_SetHomingParamsBlock, self._serial_buffer, p)
 
     def move_relative(self, displacement: int):
-        check_error_code(lib.SCC_MoveRelative
-                        )(self._serial_buffer, displacement)
+        check_error_code(
+            lib.SCC_MoveRelative, self._serial_buffer, displacement
+        )
 
     def request_jog_params(self):
-        check_error_code(lib.SCC_RequestJogParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestJogParams, self._serial_buffer)
 
     def get_jog_params(self) -> JogParameters:
         params = ffi.new("MOT_JogParameters *")
-        check_error_code(lib.SCC_GetJogParamsBlock)(self._serial_buffer, params)
+        check_error_code(lib.SCC_GetJogParamsBlock, self._serial_buffer, params)
 
         return JogParameters(
             JogModes(params.mode), params.stepSize,
@@ -184,18 +187,18 @@ class KCubeStepperMotor(KinesisDevice):
         p.velParams = vel_params[0]
         p.stopMode = stop_mode
 
-        check_error_code(lib.SCC_SetJogParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.SCC_SetJogParamsBlock, self._serial_buffer, p)
 
     def move_jog(self, direction: TravelDirection):
         direction = ffi.cast("MOT_TravelDirection", direction.value)
-        check_error_code(lib.SCC_MoveJog)(self._serial_buffer, direction)
+        check_error_code(lib.SCC_MoveJog, self._serial_buffer, direction)
 
     def request_velocity_params(self):
-        check_error_code(lib.SCC_RequestVelParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestVelParams, self._serial_buffer)
 
     def get_velocity_params(self) -> VelocityParameters:
         params = ffi.new("MOT_VelocityParameters *")
-        check_error_code(lib.SCC_GetVelParamsBlock)(self._serial_buffer, params)
+        check_error_code(lib.SCC_GetVelParamsBlock, self._serial_buffer, params)
 
         return VelocityParameters(
             params.acceleration,
@@ -209,52 +212,53 @@ class KCubeStepperMotor(KinesisDevice):
         p.acceleration = params.acceleration
         p.maxVelocity = params.max_velocity
 
-        check_error_code(lib.SCC_SetVelParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.SCC_SetVelParamsBlock, self._serial_buffer, p)
 
     def move_at_velocity(self, direction: TravelDirection):
         direction = ffi.cast("MOT_TravelDirection", direction.value)
-        check_error_code(lib.SCC_MoveAtVelocity)(self._serial_buffer, direction)
+        check_error_code(lib.SCC_MoveAtVelocity, self._serial_buffer, direction)
 
     def set_direction(self, reverse: bool):
-        check_error_code(lib.SCC_SetDirection)(self._serial_buffer, reverse)
+        check_error_code(lib.SCC_SetDirection, self._serial_buffer, reverse)
 
     def stop_immediate(self):
-        check_error_code(lib.SCC_StopImmediate)(self._serial_buffer)
+        check_error_code(lib.SCC_StopImmediate, self._serial_buffer)
 
     def stop_profiled(self):
-        check_error_code(lib.SCC_StopProfiled)(self._serial_buffer)
+        check_error_code(lib.SCC_StopProfiled, self._serial_buffer)
 
     def request_backlash(self):
-        check_error_code(lib.SCC_RequestBacklash)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestBacklash, self._serial_buffer)
 
     def get_backlash(self) -> int:
         return lib.SCC_GetBacklash(self._serial_buffer)
 
     def set_backlash(self, distance: int):
-        check_error_code(lib.SCC_SetBacklash)(self._serial_buffer, distance)
+        check_error_code(lib.SCC_SetBacklash, self._serial_buffer, distance)
 
     def get_position_counter(self) -> int:
         return lib.SCC_GetPositionCounter(self._serial_buffer)
 
     def set_position_counter(self, count: int):
-        check_error_code(lib.SCC_SetPositionCounter)(self._serial_buffer, count)
+        check_error_code(lib.SCC_SetPositionCounter, self._serial_buffer, count)
 
     def request_encoder_counter(self):
-        check_error_code(lib.SCC_RequestEncoderCounter)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestEncoderCounter, self._serial_buffer)
 
     def get_encoder_counter(self) -> int:
         return lib.SCC_GetEncoderCounter(self._serial_buffer)
 
     def set_encoder_counter(self, count: int):
-        check_error_code(lib.SCC_SetEncoderCounter)(self._serial_buffer, count)
+        check_error_code(lib.SCC_SetEncoderCounter, self._serial_buffer, count)
 
     def request_limit_switch_params(self):
-        check_error_code(lib.SCC_RequestLimitSwitchParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestLimitSwitchParams, self._serial_buffer)
 
     def get_limit_switch_params(self) -> LimitSwitchParameters:
         params = ffi.new("MOT_LimitSwitchParameters *")
-        check_error_code(lib.SCC_GetLimitSwitchParamsBlock
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.SCC_GetLimitSwitchParamsBlock, self._serial_buffer, params
+        )
         return LimitSwitchParameters(
             LimitSwitchModes(params.clockwiseHardwareLimit),
             LimitSwitchModes(params.anticlockwiseHardwareLimit),
@@ -280,8 +284,9 @@ class KCubeStepperMotor(KinesisDevice):
         p.anticlockwisePosition = params.anticlockwise_position
         p.softLimitMode = soft_limit_mode
 
-        check_error_code(lib.SCC_SetLimitSwitchParamsBlock
-                        )(self._serial_buffer, p)
+        check_error_code(
+            lib.SCC_SetLimitSwitchParamsBlock, self._serial_buffer, p
+        )
 
     def get_software_limit_mode(self) -> LimitsSoftwareApproachPolicy:
         return LimitsSoftwareApproachPolicy(
@@ -293,11 +298,11 @@ class KCubeStepperMotor(KinesisDevice):
         lib.SCC_SetLimitsSoftwareApproachPolicy(self._serial_buffer, mode)
 
     def request_mmi_params(self):
-        check_error_code(lib.SCC_RequestMMIParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestMMIParams, self._serial_buffer)
 
     def get_mmi_params(self) -> MMIParameters:
         params = ffi.new("KMOT_MMIParams *")
-        check_error_code(lib.SCC_GetMMIParamsBlock)(self._serial_buffer, params)
+        check_error_code(lib.SCC_GetMMIParamsBlock, self._serial_buffer, params)
         return MMIParameters(
             WheelMode(params.WheelMode),
             params.WheelMaxVelocity, params.WheelAcceleration,
@@ -322,16 +327,18 @@ class KCubeStepperMotor(KinesisDevice):
         p.DisplayTimeout = params.display_timeout
         p.DisplayDimIntensity = params.display_dim_intensity
 
-        check_error_code(lib.SCC_SetMMIParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.SCC_SetMMIParamsBlock, self._serial_buffer, p)
 
     def request_trigger_config_params(self):
-        check_error_code(lib.SCC_RequestTriggerConfigParams
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.SCC_RequestTriggerConfigParams, self._serial_buffer
+        )
 
     def get_trigger_config_params(self) -> TriggerConfigParameters:
         params = ffi.new("KMOT_TriggerConfig *")
-        check_error_code(lib.SCC_GetTriggerConfigParamsBlock
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.SCC_GetTriggerConfigParamsBlock, self._serial_buffer, params
+        )
         return TriggerConfigParameters(
             TriggerPortMode(params.Trigger1Mode),
             TriggerPortPolarity(params.Trigger1Polarity),
@@ -358,16 +365,18 @@ class KCubeStepperMotor(KinesisDevice):
         p.Trigger1Polarity = trigger_1_polarity
         p.Trigger2Polarity = trigger_2_polarity
 
-        check_error_code(lib.SCC_SetTriggerConfigParamsBlock
-                        )(self._serial_buffer, p)
+        check_error_code(
+            lib.SCC_SetTriggerConfigParamsBlock, self._serial_buffer, p
+        )
 
     def request_position_trigger_params(self):
-        check_error_code(lib.SCC_RequestPosTriggerParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestPosTriggerParams, self._serial_buffer)
 
     def get_position_trigger_params(self) -> PositionTriggerParameters:
         params = ffi.new("KMOT_TriggerParams *")
-        check_error_code(lib.SCC_GetTriggerParamsParamsBlock
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.SCC_GetTriggerParamsParamsBlock, self._serial_buffer, params
+        )
         return PositionTriggerParameters(
             params.TriggerStartPositionFwd, params.TriggerIntervalFwd,
             params.TriggerPulseCountFwd, params.TriggerStartPositionRev,
@@ -386,43 +395,48 @@ class KCubeStepperMotor(KinesisDevice):
         p.TriggerPulseWidth = params.trigger_pulse_width
         p.CycleCount = params.cycle_count
 
-        check_error_code(lib.SCC_SetTriggerParamsParamsBlock
-                        )(self._serial_buffer, p)
+        check_error_code(
+            lib.SCC_SetTriggerParamsParamsBlock, self._serial_buffer, p
+        )
 
     def request_move_absolute_position(self):
-        check_error_code(lib.SCC_RequestMoveAbsolutePosition
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.SCC_RequestMoveAbsolutePosition, self._serial_buffer
+        )
 
     def get_move_absolute_position(self) -> int:
         return lib.SCC_GetMoveAbsolutePosition(self._serial_buffer)
 
     def set_move_absolute_position(self, position: int):
-        check_error_code(lib.SCC_SetMoveAbsolutePosition
-                        )(self._serial_buffer, position)
+        check_error_code(
+            lib.SCC_SetMoveAbsolutePosition, self._serial_buffer, position
+        )
 
     def move_absolute(self):
-        check_error_code(lib.SCC_MoveAbsolute)(self._serial_buffer)
+        check_error_code(lib.SCC_MoveAbsolute, self._serial_buffer)
 
     def request_move_relative_distace(self):
-        check_error_code(lib.SCC_RequestMoveRelativeDistance
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.SCC_RequestMoveRelativeDistance, self._serial_buffer
+        )
 
     def get_move_relative_distance(self) -> int:
         return lib.SCC_GetMoveRelativeDistance(self._serial_buffer)
 
     def set_move_relative_distance(self, distance: int):
-        check_error_code(lib.SCC_SetMoveRelativeDistance
-                        )(self._serial_buffer, distance)
+        check_error_code(
+            lib.SCC_SetMoveRelativeDistance, self._serial_buffer, distance
+        )
 
     def move_relative_distance(self):
-        check_error_code(lib.SCC_MoveRelativeDistance)(self._serial_buffer)
+        check_error_code(lib.SCC_MoveRelativeDistance, self._serial_buffer)
 
     def request_power_params(self):
-        check_error_code(lib.SCC_RequestPowerParams)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestPowerParams, self._serial_buffer)
 
     def get_power_params(self) -> PowerParameters:
         params = ffi.new("MOT_PowerParameters *")
-        check_error_code(lib.SCC_GetPowerParams)(self._serial_buffer, params)
+        check_error_code(lib.SCC_GetPowerParams, self._serial_buffer, params)
         return PowerParameters(params.restPercentage, params.movePercentage)
 
     def set_power_params(self, params: PowerParameters):
@@ -430,28 +444,30 @@ class KCubeStepperMotor(KinesisDevice):
         p.restPercentage = params.rest_percentage
         p.movePercentage = params.move_percentage
 
-        check_error_code(lib.SCC_SetPowerParams)(self._serial_buffer, p)
+        check_error_code(lib.SCC_SetPowerParams, self._serial_buffer, p)
 
     def request_bow_index(self):
-        check_error_code(lib.SCC_RequestBowIndex)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestBowIndex, self._serial_buffer)
 
     def get_bow_index(self) -> int:
         return lib.SCC_GetBowIndex(self._serial_buffer)
 
     def set_bow_index(self, bow_index: int):
-        check_error_code(lib.SCC_SetBowIndex)(self._serial_buffer, bow_index)
+        check_error_code(lib.SCC_SetBowIndex, self._serial_buffer, bow_index)
 
     def get_uses_pid_loop_encoding(self) -> bool:
         return lib.SCC_UsesPIDLoopEncoding(self._serial_buffer)
 
     def request_pid_loop_encoder_params(self):
-        check_error_code(lib.SCC_RequestPIDLoopEncoderParams
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.SCC_RequestPIDLoopEncoderParams, self._serial_buffer
+        )
 
     def get_pid_loop_encoder_params(self) -> PIDLoopEncoderParameters:
         params = ffi.new("MOT_PIDLoopEncoderParams *")
-        check_error_code(lib.SCC_GetPIDLoopEncoderParams
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.SCC_GetPIDLoopEncoderParams, self._serial_buffer, params
+        )
         return PIDLoopEncoderParameters(
             PIDLoopMode(params.loopMode), params.proportionalGain,
             params.integralGain, params.differentialGain, params.PIDOutputLimit,
@@ -468,30 +484,32 @@ class KCubeStepperMotor(KinesisDevice):
         p.PIDOutputLimit = params.pid_output_limit
         p.PIDTolerance = params.pid_tolerance
 
-        check_error_code(lib.SCC_SetPIDLoopEncoderParams
-                        )(self._serial_buffer, p)
+        check_error_code(
+            lib.SCC_SetPIDLoopEncoderParams, self._serial_buffer, p
+        )
 
     def get_pid_loop_encoder_coefficient(self) -> float:
         return lib.SCC_GetPIDLoopEncoderCoeff(self._serial_buffer)
 
     def set_pid_loop_encoder_coefficient(self, coefficient: float):
-        check_error_code(lib.SCC_SetPIDLoopEncoderCoeff
-                        )(self._serial_buffer, coefficient)
+        check_error_code(
+            lib.SCC_SetPIDLoopEncoderCoeff, self._serial_buffer, coefficient
+        )
 
     def suspend_move_messages(self):
-        check_error_code(lib.SCC_SuspendMoveMessages)(self._serial_buffer)
+        check_error_code(lib.SCC_SuspendMoveMessages, self._serial_buffer)
 
     def resume_move_messages(self):
-        check_error_code(lib.SCC_ResumeMoveMessages)(self._serial_buffer)
+        check_error_code(lib.SCC_ResumeMoveMessages, self._serial_buffer)
 
     def request_status_bits(self):
-        check_error_code(lib.SCC_RequestStatusBits)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestStatusBits, self._serial_buffer)
 
     def get_status_bits(self) -> int:
         return lib.SCC_GetStatusBits(self._serial_buffer)
 
     def request_settings(self):
-        check_error_code(lib.SCC_RequestSettings)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestSettings, self._serial_buffer)
 
     def get_stage_axis_limits(self) -> TravelLimits:
         return TravelLimits(
@@ -500,9 +518,9 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_stage_axis_limits(self, stage_axis_limits: TravelLimits):
-        check_error_code(lib.SCC_SetStageAxisLimits)(
-            self._serial_buffer, stage_axis_limits.min_position,
-            stage_axis_limits.max_position
+        check_error_code(
+            lib.SCC_SetStageAxisLimits, self._serial_buffer,
+            stage_axis_limits.min_position, stage_axis_limits.max_position
         )
 
     def get_motor_travel_mode(self) -> TravelModes:
@@ -510,74 +528,82 @@ class KCubeStepperMotor(KinesisDevice):
 
     def set_motor_travel_mode(self, mode: TravelModes):
         mode = ffi.cast("MOT_TravelModes", mode.value)
-        check_error_code(lib.SCC_SetMotorTravelMode)(self._serial_buffer, mode)
+        check_error_code(lib.SCC_SetMotorTravelMode, self._serial_buffer, mode)
 
     def get_motor_params(self) -> MotorParameters:
         steps_per_rev = ffi.new("double *")
         gear_box_ratio = ffi.new("double *")
         pitch = ffi.new("double *")
         check_error_code(
-            lib.SCC_GetMotorParamsExt
-        )(self._serial_buffer, steps_per_rev, gear_box_ratio, pitch)
+            lib.SCC_GetMotorParamsExt, self._serial_buffer, steps_per_rev,
+            gear_box_ratio, pitch
+        )
         return MotorParameters(steps_per_rev[0], gear_box_ratio[0], pitch[0])
 
     def set_motor_params(self, params: MotorParameters):
-        check_error_code(lib.SCC_GetMotorParamsExt)(
-            self._serial_buffer, params.steps_per_rev, params.gear_box_ratio,
-            params.pitch
+        check_error_code(
+            lib.SCC_GetMotorParamsExt, self._serial_buffer,
+            params.steps_per_rev, params.gear_box_ratio, params.pitch
         )
 
     def get_motor_velocity_limits(self) -> MotorVelocityLimits:
         max_vel = ffi.new("double *")
         max_acc = ffi.new("double *")
-        check_error_code(lib.SCC_GetMotorVelocityLimits
-                        )(self._serial_buffer, max_vel, max_acc)
+        check_error_code(
+            lib.SCC_GetMotorVelocityLimits, self._serial_buffer, max_vel,
+            max_acc
+        )
         return MotorVelocityLimits(max_vel[0], max_acc[0])
 
     def set_motor_velocity_limits(self, limits: MotorVelocityLimits):
         check_error_code(
-            lib.SCC_SetMotorVelocityLimits
-        )(self._serial_buffer, limits.max_velocity, limits.max_acceleration)
+            lib.SCC_SetMotorVelocityLimits, self._serial_buffer,
+            limits.max_velocity, limits.max_acceleration
+        )
 
     def reset_rotation_modes(self):
-        check_error_code(lib.SCC_ResetRotationModes)(self._serial_buffer)
+        check_error_code(lib.SCC_ResetRotationModes, self._serial_buffer)
 
     def set_rotation_modes(
         self, mode: MovementModes, direction: MovementDirections
     ):
         mode = ffi.cast("MOT_MovementModes", mode.value)
         direction = ffi.cast("MOT_MovementDirections", direction.value)
-        check_error_code(lib.SCC_SetRotationModes
-                        )(self._serial_buffer, mode, direction)
+        check_error_code(
+            lib.SCC_SetRotationModes, self._serial_buffer, mode, direction
+        )
 
     def get_motor_travel_limits(self) -> TravelLimits:
         min_pos = ffi.new("double *")
         max_pos = ffi.new("double *")
-        check_error_code(lib.SCC_GetMotorTravelLimits
-                        )(self._serial_buffer, min_pos, max_pos)
+        check_error_code(
+            lib.SCC_GetMotorTravelLimits, self._serial_buffer, min_pos, max_pos
+        )
         return TravelLimits(min_pos[0], max_pos[0])
 
     def set_motor_travel_limits(self, limits: TravelLimits):
         check_error_code(
-            lib.SCC_SetMotorTravelLimits
-        )(self._serial_buffer, limits.min_position, limits.max_position)
+            lib.SCC_SetMotorTravelLimits, self._serial_buffer,
+            limits.min_position, limits.max_position
+        )
 
     def request_digital_outputs(self):
-        check_error_code(lib.SCC_RequestDigitalOutputs)(self._serial_buffer)
+        check_error_code(lib.SCC_RequestDigitalOutputs, self._serial_buffer)
 
     def get_digital_outputs(self) -> int:
         return lib.SCC_GetDigitalOutputs(self._serial_buffer)
 
     def set_digital_outputs(self, output: int):
-        check_error_code(lib.SCC_SetDigitalOutputs)(self._serial_buffer, output)
+        check_error_code(lib.SCC_SetDigitalOutputs, self._serial_buffer, output)
 
     def real_value_from_device_unit(
         self, device_unit: int, unit_type: UnitType
     ):
         real_value = ffi.new("double *")
         check_error_code(
-            lib.SCC_GetRealValueFromDeviceUnit
-        )(self._serial_buffer, device_unit, real_value, unit_type.value)
+            lib.SCC_GetRealValueFromDeviceUnit, self._serial_buffer,
+            device_unit, real_value, unit_type.value
+        )
         return real_value[0]
 
     def device_unit_from_real_value(
@@ -585,8 +611,9 @@ class KCubeStepperMotor(KinesisDevice):
     ):
         device_unit = ffi.new("int *")
         check_error_code(
-            lib.SCC_GetDeviceUnitFromRealValue
-        )(self._serial_buffer, real_value, device_unit, unit_type.value)
+            lib.SCC_GetDeviceUnitFromRealValue, self._serial_buffer, real_value,
+            device_unit, unit_type.value
+        )
         return device_unit[0]
 
     def clear_msg_queue(self):

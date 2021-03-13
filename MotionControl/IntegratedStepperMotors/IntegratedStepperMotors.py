@@ -32,55 +32,56 @@ class IntegratedStepperMotors(KinesisDevice):
         self.close_connection()
 
     def open_connection(self):
-        check_error_code(lib.ISC_Open)(self._serial_buffer)
+        check_error_code(lib.ISC_Open, self._serial_buffer)
 
     def close_connection(self):
-        check_error_code(lib.ISC_Open)(self._serial_buffer)
+        check_error_code(lib.ISC_Open, self._serial_buffer)
 
     def identify(self):
         lib.ISC_Identify(self._serial_buffer)
 
     def enable_channel(self):
-        check_error_code(lib.ISC_EnableChannel)(self._serial_buffer)
+        check_error_code(lib.ISC_EnableChannel, self._serial_buffer)
 
     def disable_channel(self):
-        check_error_code(lib.ISC_DisableChannel)(self._serial_buffer)
+        check_error_code(lib.ISC_DisableChannel, self._serial_buffer)
 
     def home(self):
-        check_error_code(lib.ISC_Home)(self._serial_buffer)
+        check_error_code(lib.ISC_Home, self._serial_buffer)
 
     def move_relative(self, displacement):
-        check_error_code(lib.ISC_MoveRelative
-                        )(self._serial_buffer, displacement)
+        check_error_code(
+            lib.ISC_MoveRelative, self._serial_buffer, displacement
+        )
 
     def move_to_position(self, index: int):
-        check_error_code(lib.ISC_MoveToPosition)(self._serial_buffer, index)
+        check_error_code(lib.ISC_MoveToPosition, self._serial_buffer, index)
 
     def move_absolute(self):
-        check_error_code(lib.ISC_MoveAbsolute)(self._serial_buffer)
+        check_error_code(lib.ISC_MoveAbsolute, self._serial_buffer)
 
     def move_relative_distance(self):
-        check_error_code(lib.ISC_MoveRelativeDistance)(self._serial_buffer)
+        check_error_code(lib.ISC_MoveRelativeDistance, self._serial_buffer)
 
     def move_jog(self, jog_direction: TravelDirection):
         jog_direction = ffi.cast("MOT_TravelDirection", jog_direction.value)
-        check_error_code(lib.ISC_MoveJog)(self._serial_buffer, jog_direction)
+        check_error_code(lib.ISC_MoveJog, self._serial_buffer, jog_direction)
 
     def move_at_velocity(self, direction: TravelDirection):
         direction = ffi.cast("MOT_TravelDirection", direction.value)
-        check_error_code(lib.ISC_MoveAtVelocity)(self._serial_buffer, direction)
+        check_error_code(lib.ISC_MoveAtVelocity, self._serial_buffer, direction)
 
     def stop_immediate(self):
-        check_error_code(lib.ISC_StopImmediate)(self._serial_buffer)
+        check_error_code(lib.ISC_StopImmediate, self._serial_buffer)
 
     def stop_profiled(self):
-        check_error_code(lib.ISC_StopProfiled)(self._serial_buffer)
+        check_error_code(lib.ISC_StopProfiled, self._serial_buffer)
 
     def start_polling(self, millies: int) -> bool:
         return lib.ISC_StartPolling(self._serial_buffer, millies)
 
     def stop_polling(self):
-        check_error_code(lib.ISC_StopPolling)(self._serial_buffer)
+        check_error_code(lib.ISC_StopPolling, self._serial_buffer)
 
     def load_settings(self) -> bool:
         return lib.ISC_LoadSettings(self._serial_buffer)
@@ -93,15 +94,16 @@ class IntegratedStepperMotors(KinesisDevice):
         return lib.ISC_PersistSettings(self._serial_buffer)
 
     def reset_stage_to_default(self):
-        check_error_code(lib.ISC_ResetStageToDefaults)(self._serial_buffer)
+        check_error_code(lib.ISC_ResetStageToDefaults, self._serial_buffer)
 
     def real_value_to_device_unit(
         self, real_value: float, unit: UnitType
     ) -> int:
         dev_unit = ffi.new("int *")
         check_error_code(
-            lib.ISC_GetDeviceUnitFromRealValue
-        )(self._serial_buffer, real_value, dev_unit, unit.value)
+            lib.ISC_GetDeviceUnitFromRealValue, self._serial_buffer, real_value,
+            dev_unit, unit.value
+        )
         return dev_unit[0]
 
     def device_unit_to_real_value(
@@ -109,8 +111,9 @@ class IntegratedStepperMotors(KinesisDevice):
     ) -> float:
         real_value = ffi.new("double *")
         check_error_code(
-            lib.ISC_GetRealValueFromDeviceUnit
-        )(self._serial_buffer, device_unit, real_value, unit.value)
+            lib.ISC_GetRealValueFromDeviceUnit, self._serial_buffer,
+            device_unit, real_value, unit.value
+        )
         return real_value[0]
 
     def get_firmware_version(self) -> str:
@@ -137,8 +140,9 @@ class IntegratedStepperMotors(KinesisDevice):
 
     def get_hardware_info(self) -> HardwareInfo:
         info = ffi.new("TLI_HardwareInformation *")
-        check_error_code(lib.ISC_GetHardwareInfoBlock
-                        )(self._serial_buffer, info)
+        check_error_code(
+            lib.ISC_GetHardwareInfoBlock, self._serial_buffer, info
+        )
         return HardwareInfo(
             info.serialNumber,
             info.modelNumber[0].decode("utf-8"),
@@ -164,58 +168,61 @@ class IntegratedStepperMotors(KinesisDevice):
         return lib.ISC_GetStatusBits(self._serial_buffer)
 
     def reset_rotation_modes(self):
-        check_error_code(lib.ISC_ResetRotationModes)(self._serial_buffer)
+        check_error_code(lib.ISC_ResetRotationModes, self._serial_buffer)
 
     def request_homing_params(self):
-        check_error_code(lib.ISC_RequestHomingParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestHomingParams, self._serial_buffer)
 
     def request_jog_params(self):
-        check_error_code(lib.ISC_RequestJogParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestJogParams, self._serial_buffer)
 
     def request_limit_switch_params(self):
-        check_error_code(lib.ISC_RequestLimitSwitchParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestLimitSwitchParams, self._serial_buffer)
 
     def request_potentiometer_params(self):
-        check_error_code(lib.ISC_RequestPotentiometerParams
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.ISC_RequestPotentiometerParams, self._serial_buffer
+        )
 
     def request_button_params(self):
-        check_error_code(lib.ISC_RequestButtonParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestButtonParams, self._serial_buffer)
 
     def request_power_params(self):
-        check_error_code(lib.ISC_RequestPowerParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestPowerParams, self._serial_buffer)
 
     def request_velocity_params(self):
-        check_error_code(lib.ISC_RequestVelParams)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestVelParams, self._serial_buffer)
 
     def request_backlash(self):
-        check_error_code(lib.ISC_RequestBacklash)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestBacklash, self._serial_buffer)
 
     def request_move_absolute_position(self):
-        check_error_code(lib.ISC_RequestMoveAbsolutePosition
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.ISC_RequestMoveAbsolutePosition, self._serial_buffer
+        )
 
     def request_move_relative_distance(self):
-        check_error_code(lib.ISC_RequestMoveRelativeDistance
-                        )(self._serial_buffer)
+        check_error_code(
+            lib.ISC_RequestMoveRelativeDistance, self._serial_buffer
+        )
 
     def request_bow_index(self):
-        check_error_code(lib.ISC_RequestBowIndex)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestBowIndex, self._serial_buffer)
 
     def request_trigger_switches(self):
-        check_error_code(lib.ISC_RequestTriggerSwitches)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestTriggerSwitches, self._serial_buffer)
 
     def request_position(self):
-        check_error_code(lib.ISC_RequestPosition)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestPosition, self._serial_buffer)
 
     def request_status_bits(self):
-        check_error_code(lib.ISC_RequestStatusBits)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestStatusBits, self._serial_buffer)
 
     def request_status(self):
-        check_error_code(lib.ISC_RequestStatus)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestStatus, self._serial_buffer)
 
     def request_settings(self):
-        check_error_code(lib.ISC_RequestSettings)(self._serial_buffer)
+        check_error_code(lib.ISC_RequestSettings, self._serial_buffer)
 
     def set_direction(self, reverse: bool):
         lib.ISC_SetDirection(self._serial_buffer, reverse)
@@ -225,8 +232,9 @@ class IntegratedStepperMotors(KinesisDevice):
     ):
         mode = ffi.cast("MOT_MovementModes", mode.value)
         direction = ffi.cast("MOT_MovementDirections", direction.value)
-        check_error_code(lib.ISC_SetRotationModes
-                        )(self._serial_buffer, mode, direction)
+        check_error_code(
+            lib.ISC_SetRotationModes, self._serial_buffer, mode, direction
+        )
 
     def set_calibration_file(self, filename: str, enabled: bool = True):
         filename = ffi.new("char[]", filename.encode("utf-8"))
@@ -247,8 +255,9 @@ class IntegratedStepperMotors(KinesisDevice):
         threshold_deflection = ffi.new("WORD *")
         velocity = ffi.new("DWORD *")
         check_error_code(
-            lib.ISC_GetPotentiometerParams
-        )(self._serial_buffer, index, threshold_deflection, velocity)
+            lib.ISC_GetPotentiometerParams, self._serial_buffer, index,
+            threshold_deflection, velocity
+        )
         return PotentiometerParameters(
             index, threshold_deflection[0], velocity[0]
         )
@@ -257,40 +266,43 @@ class IntegratedStepperMotors(KinesisDevice):
         threshold_deflection = ffi.cast("WORD", params.threshold_deflection)
         velocity = ffi.cast("DWORD", params.velocity)
         check_error_code(
-            lib.ISC_SetPotentiometerParams
-        )(self._serial_buffer, params.index, threshold_deflection, velocity)
+            lib.ISC_SetPotentiometerParams, self._serial_buffer, params.index,
+            threshold_deflection, velocity
+        )
 
     def get_homing_velocity(self) -> int:
         return lib.ISC_GetHomingVelocity(self._serial_buffer)
 
     def set_homing_velocity(self, velocity: int):
-        check_error_code(lib.ISC_SetHomingVelocity
-                        )(self._serial_buffer, velocity)
+        check_error_code(
+            lib.ISC_SetHomingVelocity, self._serial_buffer, velocity
+        )
 
     def get_led_switches(self) -> int:
         return lib.ISC_GetLEDswitches(self._serial_buffer)
 
     def set_led_switches(self, led_switches: int):
-        check_error_code(lib.ISC_SetLEDswitches
-                        )(self._serial_buffer, led_switches)
+        check_error_code(
+            lib.ISC_SetLEDswitches, self._serial_buffer, led_switches
+        )
 
     def get_jog_step_size(self) -> int:
         return lib.ISC_GetJogStepSize(self._serial_buffer)
 
     def set_jog_step_size(self, step_size: int):
-        check_error_code(lib.ISC_SetJogStepSize)(self._serial_buffer, step_size)
+        check_error_code(lib.ISC_SetJogStepSize, self._serial_buffer, step_size)
 
     def get_backlash(self) -> int:
         return lib.ISC_GetBacklash(self._serial_buffer)
 
     def set_backlash(self, distance: int):
-        check_error_code(lib.ISC_SetBacklash)(self._serial_buffer, distance)
+        check_error_code(lib.ISC_SetBacklash, self._serial_buffer, distance)
 
     def get_position_counter(self) -> int:
         return lib.ISC_GetPositionCounter(self._serial_buffer)
 
     def set_position_counter(self, count: int):
-        check_error_code(lib.ISC_SetPositionCounter)(self._serial_buffer, count)
+        check_error_code(lib.ISC_SetPositionCounter, self._serial_buffer, count)
 
     def get_limit_switch_params(self) -> LimitSwitchParameters:
         clockwise_hardware_limit = ffi.new("MOT_LimitSwitchModes * ")
@@ -299,10 +311,10 @@ class IntegratedStepperMotors(KinesisDevice):
         anticlockwise_position = ffi.new("unsigned int * ")
         soft_limit_mode = ffi.new("MOT_LimitSwitchSWModes * ")
 
-        check_error_code(lib.ISC_GetLimitSwitchParams)(
-            self._serial_buffer, clockwise_hardware_limit,
-            anticlockwise_hardware_limit, clockwise_position,
-            anticlockwise_position, soft_limit_mode
+        check_error_code(
+            lib.ISC_GetLimitSwitchParams, self._serial_buffer,
+            clockwise_hardware_limit, anticlockwise_hardware_limit,
+            clockwise_position, anticlockwise_position, soft_limit_mode
         )
 
         return LimitSwitchParameters(
@@ -326,10 +338,10 @@ class IntegratedStepperMotors(KinesisDevice):
         soft_limit_mode = ffi.cast(
             "MOT_LimitSwitchSWModes", params.soft_limit_mode.value
         )
-        check_error_code(lib.ISC_SetLimitSwitchParams)(
-            self._serial_buffer, clockwise_hardware_limit,
-            anticlockwise_hardware_limit, clockwise_position,
-            anticlockwise_position, soft_limit_mode
+        check_error_code(
+            lib.ISC_SetLimitSwitchParams, self._serial_buffer,
+            clockwise_hardware_limit, anticlockwise_hardware_limit,
+            clockwise_position, anticlockwise_position, soft_limit_mode
         )
 
     def get_soft_limit_mode(self) -> LimitsSoftwareApproachPolicy:
@@ -353,9 +365,9 @@ class IntegratedStepperMotors(KinesisDevice):
         left_button_position = ffi.new("int *")
         right_button_position = ffi.new("int *")
         timeout = ffi.new("short *")
-        check_error_code(lib.ISC_GetButtonParams)(
-            self._serial_buffer, button_mode, left_button_position,
-            right_button_position, timeout
+        check_error_code(
+            lib.ISC_GetButtonParams, self._serial_buffer, button_mode,
+            left_button_position, right_button_position, timeout
         )
         return ButtonParameters(
             ButtonModes(button_mode[0]), left_button_position[0],
@@ -364,29 +376,32 @@ class IntegratedStepperMotors(KinesisDevice):
 
     def set_button_params(self, params: ButtonParameters):
         button_mode = ffi.cast("MOT_ButtonModes", params.button_mode.value)
-        check_error_code(lib.ISC_SetButtonParams)(
-            self._serial_buffer, button_mode, params.left_button_position,
-            params.right_button_position
+        check_error_code(
+            lib.ISC_SetButtonParams, self._serial_buffer, button_mode,
+            params.left_button_position, params.right_button_position
         )
 
     def get_absolute_position(self) -> int:
         return lib.ISC_GetMoveAbsolutePosition(self._serial_buffer)
 
     def set_absolute_position(self, position: int):
-        check_error_code(lib.ISC_SetMoveAbsolutePosition
-                        )(self._serial_buffer, position)
+        check_error_code(
+            lib.ISC_SetMoveAbsolutePosition, self._serial_buffer, position
+        )
 
     def get_relative_distance(self) -> int:
         return lib.ISC_GetMoveRelativeDistance(self._serial_buffer)
 
     def set_relative_distance(self, distance: int):
-        check_error_code(lib.ISC_SetMoveRelativeDistance
-                        )(self._serial_buffer, distance)
+        check_error_code(
+            lib.ISC_SetMoveRelativeDistance, self._serial_buffer, distance
+        )
 
     def get_homing_params(self) -> HomingParameters:
         params = ffi.new("MOT_HomingParameters *")
-        check_error_code(lib.ISC_GetHomingParamsBlock
-                        )(self._serial_buffer, params)
+        check_error_code(
+            lib.ISC_GetHomingParamsBlock, self._serial_buffer, params
+        )
         return HomingParameters(
             TravelDirection(params.direction),
             HomeLimitSwitchDirection(params.limitSwitch), params.velocity,
@@ -405,11 +420,11 @@ class IntegratedStepperMotors(KinesisDevice):
         p.velocity = params.velocity
         p.offsetDistance = params.offset_distance
 
-        check_error_code(lib.ISC_SetHomingParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.ISC_SetHomingParamsBlock, self._serial_buffer, p)
 
     def get_jog_params(self) -> JogParameters:
         params = ffi.new("MOT_JogParameters *")
-        check_error_code(lib.ISC_GetJogParamsBlock)(self._serial_buffer, params)
+        check_error_code(lib.ISC_GetJogParamsBlock, self._serial_buffer, params)
         return JogParameters(
             JogModes(params.mode), params.stepSize,
             VelocityParameters(
@@ -432,11 +447,11 @@ class IntegratedStepperMotors(KinesisDevice):
         p.velParams = vel_params[0]
         p.stopMode = stop_mode
 
-        check_error_code(lib.ISC_SetJogParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.ISC_SetJogParamsBlock, self._serial_buffer, p)
 
     def get_velocity_params(self) -> VelocityParameters:
         params = ffi.new("MOT_VelocityParameters *")
-        check_error_code(lib.ISC_GetVelParamsBlock)(self._serial_buffer, params)
+        check_error_code(lib.ISC_GetVelParamsBlock, self._serial_buffer, params)
         return VelocityParameters(
             params.acceleration, params.maxVelocity, params.minVelocity
         )
@@ -446,31 +461,32 @@ class IntegratedStepperMotors(KinesisDevice):
         p.minVelocity = params.min_velocity
         p.acceleration = params.acceleration
         p.maxVelocity = params.max_velocity
-        check_error_code(lib.ISC_SetVelParamsBlock)(self._serial_buffer, p)
+        check_error_code(lib.ISC_SetVelParamsBlock, self._serial_buffer, p)
 
     def get_power_params(self) -> PowerParameters:
         params = ffi.new("MOT_PowerParameters *")
-        check_error_code(lib.ISC_GetPowerParams)(self._serial_buffer, params)
+        check_error_code(lib.ISC_GetPowerParams, self._serial_buffer, params)
         return PowerParameters(params.restPercentage, params.movePercentage)
 
     def set_power_params(self, params: PowerParameters):
         p = ffi.new("MOT_PowerParameters *")
         p.restPercentage = params.rest_percentage
         p.movePercentage = params.move_percentage
-        check_error_code(lib.ISC_SetPowerParams)(self._serial_buffer, p)
+        check_error_code(lib.ISC_SetPowerParams, self._serial_buffer, p)
 
     def get_bow_index(self) -> int:
         return lib.ISC_GetBowIndex(self._serial_buffer)
 
     def set_bow_index(self, index: int) -> int:
-        check_error_code(lib.ISC_SetBowIndex)(self._serial_buffer, index)
+        check_error_code(lib.ISC_SetBowIndex, self._serial_buffer, index)
 
     def get_trigger_switches(self) -> int:
         return lib.ISC_GetTriggerSwitches(self._serial_buffer)
 
     def set_trigger_switches(self, indicator_bits: int):
-        check_error_code(lib.ISC_SetTriggerSwitches
-                        )(self._serial_buffer, indicator_bits)
+        check_error_code(
+            lib.ISC_SetTriggerSwitches, self._serial_buffer, indicator_bits
+        )
 
     def get_stage_axis_limits(self) -> TravelLimits:
         return TravelLimits(
@@ -480,29 +496,31 @@ class IntegratedStepperMotors(KinesisDevice):
 
     def set_stage_axis_limits(self, limits: TravelLimits):
         check_error_code(
-            lib.ISC_SetStageAxisLimits
-        )(self._serial_buffer, limits.min_position, limits.max_position)
+            lib.ISC_SetStageAxisLimits, self._serial_buffer,
+            limits.min_position, limits.max_position
+        )
 
     def get_motor_travel_mode(self) -> TravelModes:
         return TravelModes(lib.ISC_GetMotorTravelMode(self._serial_buffer))
 
     def set_motor_travel_mode(self, mode: TravelModes):
         mode = ffi.cast("MOT_TravelModes", mode)
-        check_error_code(lib.ISC_SetMotorTravelMode)(self._serial_buffer, mode)
+        check_error_code(lib.ISC_SetMotorTravelMode, self._serial_buffer, mode)
 
     def get_motor_params(self) -> MotorParameters:
         steps_per_rev = ffi.new("double *")
         gear_box_ratio = ffi.new("double *")
         pitch = ffi.new("double *")
         check_error_code(
-            lib.ISC_GetMotorParamsExt
-        )(self._serial_buffer, steps_per_rev, gear_box_ratio, pitch)
+            lib.ISC_GetMotorParamsExt, self._serial_buffer, steps_per_rev,
+            gear_box_ratio, pitch
+        )
         return MotorParameters(steps_per_rev[0], gear_box_ratio[0], pitch[0])
 
     def set_motor_params(self, params: MotorParameters):
-        check_error_code(lib.ISC_SetMotorParamsExt)(
-            self._serial_buffer, params.steps_per_rev, params.gear_box_ratio,
-            params.pitch
+        check_error_code(
+            lib.ISC_SetMotorParamsExt, self._serial_buffer,
+            params.steps_per_rev, params.gear_box_ratio, params.pitch
         )
 
     firmware_version = property(get_firmware_version)
