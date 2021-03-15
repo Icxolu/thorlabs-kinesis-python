@@ -367,3 +367,10 @@ class PIDLoopEncoderParameters(NamedTuple):
     differential_gain: int
     pid_output_limit: int
     pid_tolerance: int
+
+class DCPIDParameters(NamedTuple):
+    proportional_gain: int
+    integral_gain: int
+    differential_gain: int
+    integral_limit: int
+    parameter_filter: int
