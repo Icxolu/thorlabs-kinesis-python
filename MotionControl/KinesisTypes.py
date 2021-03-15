@@ -368,6 +368,7 @@ class PIDLoopEncoderParameters(NamedTuple):
     pid_output_limit: int
     pid_tolerance: int
 
+
 class DCPIDParameters(NamedTuple):
     proportional_gain: int
     integral_gain: int
