@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name="Thorlabs",
+    name="Thorlabs-Kinesis-Python",
     packages=find_namespace_packages(),
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=[
