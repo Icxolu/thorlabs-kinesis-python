@@ -6,6 +6,7 @@ setup(
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=[
         "MotionControl/IntegratedStepperMotors/IntegratedStepperMotors_build.py:ffibuilder",
+        "MotionControl/FilterFlipper/FilterFlipper_build.py:ffibuilder",
         "MotionControl/KCube/StepperMotor/StepperMotor_build.py:ffibuilder",
         "MotionControl/KCube/DCServo/DCServo_build.py:ffibuilder",
     ],
