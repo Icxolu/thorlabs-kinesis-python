@@ -244,6 +244,31 @@ class PIDLoopMode(IntEnum):
     ClosedLoopMode = 0x02
 
 
+@unique
+class Positions(IntEnum):
+    PositionError = 0
+    Position1 = 0x01
+    Position2 = 0x02
+
+
+@unique
+class IOModes(IntEnum):
+    ToggleOnPositiveEdge = 0x01
+    SetPositionOnPositiveEdge = 0x02
+    OutputHighAtSetPosition = 0x04
+    OutputHighWhemMoving = 0x08
+
+
+@unique
+class SignalModes(IntEnum):
+    InputButton = 0x01
+    InputLogic = 0x02
+    InputSwap = 0x04
+    OutputLevel = 0x10
+    OutputPulse = 0x20
+    OutputSwap = 0x40
+
+
 class HardwareInfo(NamedTuple):
     serial_number: int
     model_number: str
@@ -375,3 +400,14 @@ class DCPIDParameters(NamedTuple):
     differential_gain: int
     integral_limit: int
     parameter_filter: int
+
+
+class IOSettings(NamedTuple):
+    transit_time: int
+    adc_speed_value: int
+    digital_io1_operation_mode: IOModes
+    digital_io1_signal_mode: SignalModes
+    digital_io1_pulse_width: int
+    digital_io2_operation_mode: IOModes
+    digital_io2_signal_mode: SignalModes
+    digital_io2_pulse_width: int
