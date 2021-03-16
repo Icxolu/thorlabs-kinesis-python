@@ -10,7 +10,7 @@ class KCubeDCServo(KinesisDevice):
     @staticmethod
     def list_devices() -> List[str]:
         lib.TLI_BuildDeviceList()
-        buffer = ffi.new("char[100]")
+        buffer = ffi.new("char[]", 100)
         lib.TLI_GetDeviceListExt(buffer, len(buffer))
 
         return ffi.string(buffer).decode("utf-8").split(",")[:-1]
@@ -57,11 +57,11 @@ class KCubeDCServo(KinesisDevice):
         check_error_code(lib.CC_GetHardwareInfoBlock, self._serial_buffer, info)
         return HardwareInfo(
             info.serialNumber,
-            info.modelNumber[0].decode("utf-8"),
+            ffi.string(info.modelNumber).decode("utf-8"),
             info.type,
             self._to_version(info.firmwareVersion),
-            info.notes[0].decode("utf-8"),
-            info.deviceDependantData[0],
+            ffi.string(info.notes).decode("utf-8"),
+            ffi.buffer(info.deviceDependantData)[:],
             info.hardwareVersion,
             info.modificationState,
             info.numChannels,
