@@ -7,6 +7,27 @@ from typing import List
 
 class IntegratedStepperMotors(KinesisDevice):
 
+    class StatusBits(NamedTuple):
+        at_cw_hardware_limit_switch: bool
+        at_ccw_hardware_limit_switch: bool
+        at_cw_software_limit_switch: bool
+        at_ccw_software_limit_switch: bool
+        is_motor_moving_cw: bool
+        is_motor_moving_ccw: bool
+        is_motor_jogging_cw: bool
+        is_motor_jogging_ccw: bool
+        is_motor_connected: bool
+        is_motor_homing: bool
+        is_motor_homed: bool
+        dig_input_1_state: bool
+        dig_input_2_state: bool
+        dig_input_3_state: bool
+        dig_input_4_state: bool
+        dig_input_5_state: bool
+        dig_input_6_state: bool
+        is_active: bool
+        is_channel_enabled: bool
+
     @staticmethod
     def list_devices() -> List[str]:
         lib.TLI_BuildDeviceList()
@@ -164,8 +185,30 @@ class IntegratedStepperMotors(KinesisDevice):
     def get_number_of_positions(self) -> int:
         return lib.ISC_GetNumberPositions(self._serial_buffer)
 
-    def get_status_bits(self) -> int:
-        return lib.ISC_GetStatusBits(self._serial_buffer)
+    def get_status_bits(self) -> "IntegratedStepperMotors.StatusBits":
+        status_bits = lib.ISC_GetStatusBits(self._serial_buffer)
+        bits = self._read_status_bits(status_bits)
+        return IntegratedStepperMotors.StatusBits(
+            at_cw_hardware_limit_switch=bits[0],
+            at_ccw_hardware_limit_switch=bits[1],
+            at_cw_software_limit_switch=bits[2],
+            at_ccw_software_limit_switch=bits[3],
+            is_motor_moving_cw=bits[4],
+            is_motor_moving_ccw=bits[5],
+            is_motor_jogging_cw=bits[6],
+            is_motor_jogging_ccw=bits[7],
+            is_motor_connected=bits[8],
+            is_motor_homing=bits[9],
+            is_motor_homed=bits[10],
+            dig_input_1_state=bits[20],
+            dig_input_2_state=bits[21],
+            dig_input_3_state=bits[22],
+            dig_input_4_state=bits[23],
+            dig_input_5_state=bits[24],
+            dig_input_6_state=bits[25],
+            is_active=bits[29],
+            is_channel_enabled=bits[31]
+        )
 
     def reset_rotation_modes(self):
         check_error_code(lib.ISC_ResetRotationModes, self._serial_buffer)
@@ -525,6 +568,7 @@ class IntegratedStepperMotors(KinesisDevice):
 
     firmware_version = property(get_firmware_version)
     software_version = property(get_software_version)
+    status_bits = property(get_status_bits)
     is_connected = property(check_connection)
     can_home = property(get_can_home)
     can_move_without_homing_first = property(get_can_move_without_homing_first)

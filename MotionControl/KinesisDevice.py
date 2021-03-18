@@ -17,6 +17,7 @@ class KinesisDevice(metaclass=ABCMeta):
         self._serial_buffer = ffi.new("char[]", serial_number.encode("utf-8"))
         self.list_devices()
         self.open_connection()
+        self.load_settings()
         self.start_polling(100)
 
     def __enter__(self):
@@ -58,6 +59,10 @@ class KinesisDevice(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def load_settings(self) -> bool:
+        pass
+
+    @abstractmethod
     def get_hardware_info(self) -> HardwareInfo:
         pass
 
@@ -87,6 +92,12 @@ class KinesisDevice(metaclass=ABCMeta):
         patch = (v >> 8) & 0xFF
         meta = v & 0xFF
         return major, minor, patch, meta
+
+    def _read_status_bits(self, status_bits: int) -> List[bool]:
+        bits = []
+        for i in range(32):
+            bits.append(bool((status_bits >> i) & 0x01))
+        return bits
 
     software_version = property(get_software_version)
     is_connected = property(check_connection)

@@ -7,6 +7,27 @@ from typing import List, Callable
 
 class KCubeStepperMotor(KinesisDevice):
 
+    class StatusBits(NamedTuple):
+        at_cw_hardware_limit_switch: bool
+        at_ccw_hardware_limit_switch: bool
+        at_cw_software_limit_switch: bool
+        at_ccw_software_limit_switch: bool
+        is_motor_moving_cw: bool
+        is_motor_moving_ccw: bool
+        is_motor_jogging_cw: bool
+        is_motor_jogging_ccw: bool
+        is_motor_connected: bool
+        is_motor_homing: bool
+        is_motor_homed: bool
+        dig_input_1_state: bool
+        dig_input_2_state: bool
+        dig_input_3_state: bool
+        dig_input_4_state: bool
+        dig_input_5_state: bool
+        dig_input_6_state: bool
+        is_active: bool
+        is_channel_enabled: bool
+
     @staticmethod
     def list_devices() -> List[str]:
         lib.TLI_BuildDeviceList()
@@ -505,8 +526,30 @@ class KCubeStepperMotor(KinesisDevice):
     def request_status_bits(self):
         check_error_code(lib.SCC_RequestStatusBits, self._serial_buffer)
 
-    def get_status_bits(self) -> int:
-        return lib.SCC_GetStatusBits(self._serial_buffer)
+    def get_status_bits(self) -> "KCubeStepperMotor.StatusBits":
+        status_bits = lib.SCC_GetStatusBits(self._serial_buffer)
+        bits = self._read_status_bits(status_bits)
+        return KCubeStepperMotor.StatusBits(
+            at_cw_hardware_limit_switch=bits[0],
+            at_ccw_hardware_limit_switch=bits[1],
+            at_cw_software_limit_switch=bits[2],
+            at_ccw_software_limit_switch=bits[3],
+            is_motor_moving_cw=bits[4],
+            is_motor_moving_ccw=bits[5],
+            is_motor_jogging_cw=bits[6],
+            is_motor_jogging_ccw=bits[7],
+            is_motor_connected=bits[8],
+            is_motor_homing=bits[9],
+            is_motor_homed=bits[10],
+            dig_input_1_state=bits[20],
+            dig_input_2_state=bits[21],
+            dig_input_3_state=bits[22],
+            dig_input_4_state=bits[23],
+            dig_input_5_state=bits[24],
+            dig_input_6_state=bits[25],
+            is_active=bits[29],
+            is_channel_enabled=bits[31]
+        )
 
     def request_settings(self):
         check_error_code(lib.SCC_RequestSettings, self._serial_buffer)
