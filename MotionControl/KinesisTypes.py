@@ -269,6 +269,26 @@ class SignalModes(IntEnum):
     OutputSwap = 0x40
 
 
+@unique
+class OperatingModes(IntEnum):
+    Manual = 0x01
+    Single = 0x02
+    Auto = 0x03
+    Triggered = 0x04
+
+
+@unique
+class OperatingStates(IntEnum):
+    Active = 0x01
+    Inactive = 0x02
+
+
+@unique
+class SolenoidStates(IntEnum):
+    Open = 0x01
+    Closed = 0x02
+
+
 class HardwareInfo(NamedTuple):
     serial_number: int
     model_number: str
@@ -411,3 +431,9 @@ class IOSettings(NamedTuple):
     digital_io2_operation_mode: IOModes
     digital_io2_signal_mode: SignalModes
     digital_io2_pulse_width: int
+
+
+class CycleParameters(NamedTuple):
+    open_time: int
+    closed_time: int
+    num_cycles: int
