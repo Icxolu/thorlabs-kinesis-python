@@ -105,7 +105,7 @@ class FilterFlipper(KinesisDevice):
         check_error_code(lib.FF_Home, self._serial_buffer)
 
     def move_to_position(self, position: Positions):
-        position = ffi.cast("FF_Positions", position.value)
+        position = ffi.cast("FF_Positions", position)
         check_error_code(lib.FF_MoveToPosition, self._serial_buffer, position)
 
     def get_position(self) -> Positions:
@@ -131,16 +131,16 @@ class FilterFlipper(KinesisDevice):
     def set_io_settings(self, settings: IOSettings):
         s = ffi.new("FF_IOSettings *")
         dig_io1_op_mode = ffi.cast(
-            "FF_IOModes", settings.digital_io1_operation_mode.value
+            "FF_IOModes", settings.digital_io1_operation_mode
         )
         dig_io1_sig_mode = ffi.cast(
-            "FF_SignalModes", settings.digital_io1_signal_mode.value
+            "FF_SignalModes", settings.digital_io1_signal_mode
         )
         dig_io2_op_mode = ffi.cast(
-            "FF_IOModes", settings.digital_io2_operation_mode.value
+            "FF_IOModes", settings.digital_io2_operation_mode
         )
         dig_io2_sig_mode = ffi.cast(
-            "FF_SignalModes", settings.digital_io2_signal_mode.value
+            "FF_SignalModes", settings.digital_io2_signal_mode
         )
 
         s.transitTime = settings.transit_time

@@ -160,9 +160,9 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_homing_params(self, params: HomingParameters):
-        direction = ffi.cast("MOT_TravelDirection", params.direction.value)
+        direction = ffi.cast("MOT_TravelDirection", params.direction)
         limit_switch = ffi.cast(
-            "MOT_HomeLimitSwitchDirection", params.limit_switch.value
+            "MOT_HomeLimitSwitchDirection", params.limit_switch
         )
 
         p = ffi.new("MOT_HomingParameters *")
@@ -195,12 +195,12 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_jog_params(self, params: JogParameters):
-        mode = ffi.cast("MOT_JogModes", params.mode.value)
+        mode = ffi.cast("MOT_JogModes", params.mode)
         vel_params = ffi.new("MOT_VelocityParameters *")
         vel_params.minVelocity = params.vel_params.min_velocity
         vel_params.acceleration = params.vel_params.acceleration
         vel_params.maxVelocity = params.vel_params.max_velocity
-        stop_mode = ffi.cast("MOT_StopModes", params.stop_mode.value)
+        stop_mode = ffi.cast("MOT_StopModes", params.stop_mode)
 
         p = ffi.new("MOT_JogParameters *")
         p.mode = mode
@@ -211,7 +211,7 @@ class KCubeStepperMotor(KinesisDevice):
         check_error_code(lib.SCC_SetJogParamsBlock, self._serial_buffer, p)
 
     def move_jog(self, direction: TravelDirection):
-        direction = ffi.cast("MOT_TravelDirection", direction.value)
+        direction = ffi.cast("MOT_TravelDirection", direction)
         check_error_code(lib.SCC_MoveJog, self._serial_buffer, direction)
 
     def request_velocity_params(self):
@@ -236,7 +236,7 @@ class KCubeStepperMotor(KinesisDevice):
         check_error_code(lib.SCC_SetVelParamsBlock, self._serial_buffer, p)
 
     def move_at_velocity(self, direction: TravelDirection):
-        direction = ffi.cast("MOT_TravelDirection", direction.value)
+        direction = ffi.cast("MOT_TravelDirection", direction)
         check_error_code(lib.SCC_MoveAtVelocity, self._serial_buffer, direction)
 
     def set_direction(self, reverse: bool):
@@ -289,13 +289,13 @@ class KCubeStepperMotor(KinesisDevice):
 
     def set_limit_switch_params(self, params: LimitSwitchParameters):
         cw_hl = ffi.cast(
-            "MOT_LimitSwitchModes", params.clockwise_hardware_limit.value
+            "MOT_LimitSwitchModes", params.clockwise_hardware_limit
         )
         ccw_hl = ffi.cast(
-            "MOT_LimitSwitchModes", params.anticlockwise_hardware_limit.value
+            "MOT_LimitSwitchModes", params.anticlockwise_hardware_limit
         )
         soft_limit_mode = ffi.cast(
-            "MOT_LimitSwitchSWModes", params.soft_limit_mode.value
+            "MOT_LimitSwitchSWModes", params.soft_limit_mode
         )
 
         p = ffi.new("MOT_LimitSwitchParameters *")
@@ -315,7 +315,7 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_softwarre_limit_mode(self, mode: LimitsSoftwareApproachPolicy):
-        mode = ffi.cast("MOT_LimitsSoftwareApproachPolicy", mode.value)
+        mode = ffi.cast("MOT_LimitsSoftwareApproachPolicy", mode)
         lib.SCC_SetLimitsSoftwareApproachPolicy(self._serial_buffer, mode)
 
     def request_mmi_params(self):
@@ -333,9 +333,9 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_mmi_params(self, params: MMIParameters):
-        wheel_mode = ffi.cast("KMOT_WheelMode", params.wheel_mode.value)
+        wheel_mode = ffi.cast("KMOT_WheelMode", params.wheel_mode)
         wheel_direction_sense = ffi.cast(
-            "KMOT_WheelMode", params.wheel_direction_sense.value
+            "KMOT_WheelMode", params.wheel_direction_sense
         )
         p = ffi.new("KMOT_MMIParams *")
         p.WheelMode = wheel_mode
@@ -368,17 +368,13 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_trigger_config_params(self, params: TriggerConfigParameters):
-        trigger_1_mode = ffi.cast(
-            "KMOT_TriggerPortMode", params.trigger_1_mode.value
-        )
-        trigger_2_mode = ffi.cast(
-            "KMOT_TriggerPortMode", params.trigger_2_mode.value
-        )
+        trigger_1_mode = ffi.cast("KMOT_TriggerPortMode", params.trigger_1_mode)
+        trigger_2_mode = ffi.cast("KMOT_TriggerPortMode", params.trigger_2_mode)
         trigger_1_polarity = ffi.cast(
-            "KMOT_TriggerPortPolarity", params.trigger_1_polarity.value
+            "KMOT_TriggerPortPolarity", params.trigger_1_polarity
         )
         trigger_2_polarity = ffi.cast(
-            "KMOT_TriggerPortPolarity", params.trigger_2_polarity.value
+            "KMOT_TriggerPortPolarity", params.trigger_2_polarity
         )
         p = ffi.new("KMOT_TriggerConfig *")
         p.Trigger1Mode = trigger_1_mode
@@ -496,7 +492,7 @@ class KCubeStepperMotor(KinesisDevice):
         )
 
     def set_pid_loop_encoder_params(self, params: PIDLoopEncoderParameters):
-        loop_mode = ffi.cast("MOT_PID_LoopMode", params.loop_mode.value)
+        loop_mode = ffi.cast("MOT_PID_LoopMode", params.loop_mode)
         p = ffi.new("MOT_PIDLoopEncoderParams *")
         p.loopMode = loop_mode
         p.proportionalGain = params.proportional_gain
@@ -570,7 +566,7 @@ class KCubeStepperMotor(KinesisDevice):
         return TravelModes(lib.SCC_GetMotorTravelMode(self._serial_buffer))
 
     def set_motor_travel_mode(self, mode: TravelModes):
-        mode = ffi.cast("MOT_TravelModes", mode.value)
+        mode = ffi.cast("MOT_TravelModes", mode)
         check_error_code(lib.SCC_SetMotorTravelMode, self._serial_buffer, mode)
 
     def get_motor_params(self) -> MotorParameters:
@@ -610,8 +606,8 @@ class KCubeStepperMotor(KinesisDevice):
     def set_rotation_modes(
         self, mode: MovementModes, direction: MovementDirections
     ):
-        mode = ffi.cast("MOT_MovementModes", mode.value)
-        direction = ffi.cast("MOT_MovementDirections", direction.value)
+        mode = ffi.cast("MOT_MovementModes", mode)
+        direction = ffi.cast("MOT_MovementDirections", direction)
         check_error_code(
             lib.SCC_SetRotationModes, self._serial_buffer, mode, direction
         )
@@ -645,7 +641,7 @@ class KCubeStepperMotor(KinesisDevice):
         real_value = ffi.new("double *")
         check_error_code(
             lib.SCC_GetRealValueFromDeviceUnit, self._serial_buffer,
-            device_unit, real_value, unit_type.value
+            device_unit, real_value, unit_type
         )
         return real_value[0]
 
@@ -655,7 +651,7 @@ class KCubeStepperMotor(KinesisDevice):
         device_unit = ffi.new("int *")
         check_error_code(
             lib.SCC_GetDeviceUnitFromRealValue, self._serial_buffer, real_value,
-            device_unit, unit_type.value
+            device_unit, unit_type
         )
         return device_unit[0]
 

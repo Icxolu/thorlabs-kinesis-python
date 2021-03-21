@@ -85,11 +85,11 @@ class IntegratedStepperMotors(KinesisDevice):
         check_error_code(lib.ISC_MoveRelativeDistance, self._serial_buffer)
 
     def move_jog(self, jog_direction: TravelDirection):
-        jog_direction = ffi.cast("MOT_TravelDirection", jog_direction.value)
+        jog_direction = ffi.cast("MOT_TravelDirection", jog_direction)
         check_error_code(lib.ISC_MoveJog, self._serial_buffer, jog_direction)
 
     def move_at_velocity(self, direction: TravelDirection):
-        direction = ffi.cast("MOT_TravelDirection", direction.value)
+        direction = ffi.cast("MOT_TravelDirection", direction)
         check_error_code(lib.ISC_MoveAtVelocity, self._serial_buffer, direction)
 
     def stop_immediate(self):
@@ -123,7 +123,7 @@ class IntegratedStepperMotors(KinesisDevice):
         dev_unit = ffi.new("int *")
         check_error_code(
             lib.ISC_GetDeviceUnitFromRealValue, self._serial_buffer, real_value,
-            dev_unit, unit.value
+            dev_unit, unit
         )
         return dev_unit[0]
 
@@ -133,7 +133,7 @@ class IntegratedStepperMotors(KinesisDevice):
         real_value = ffi.new("double *")
         check_error_code(
             lib.ISC_GetRealValueFromDeviceUnit, self._serial_buffer,
-            device_unit, real_value, unit.value
+            device_unit, real_value, unit
         )
         return real_value[0]
 
@@ -273,8 +273,8 @@ class IntegratedStepperMotors(KinesisDevice):
     def set_rotation_modes(
         self, mode: MovementModes, direction: MovementDirections
     ):
-        mode = ffi.cast("MOT_MovementModes", mode.value)
-        direction = ffi.cast("MOT_MovementDirections", direction.value)
+        mode = ffi.cast("MOT_MovementModes", mode)
+        direction = ffi.cast("MOT_MovementDirections", direction)
         check_error_code(
             lib.ISC_SetRotationModes, self._serial_buffer, mode, direction
         )
@@ -369,17 +369,17 @@ class IntegratedStepperMotors(KinesisDevice):
 
     def set_limit_switch_params(self, params: LimitSwitchParameters):
         clockwise_hardware_limit = ffi.cast(
-            "MOT_LimitSwitchModes", params.clockwise_hardware_limit.value
+            "MOT_LimitSwitchModes", params.clockwise_hardware_limit
         )
         anticlockwise_hardware_limit = ffi.cast(
-            "MOT_LimitSwitchModes", params.anticlockwise_hardware_limit.value
+            "MOT_LimitSwitchModes", params.anticlockwise_hardware_limit
         )
         clockwise_position = ffi.cast("unsigned int", params.clockwise_position)
         anticlockwise_position = ffi.cast(
             "unsigned int", params.anticlockwise_position
         )
         soft_limit_mode = ffi.cast(
-            "MOT_LimitSwitchSWModes", params.soft_limit_mode.value
+            "MOT_LimitSwitchSWModes", params.soft_limit_mode
         )
         check_error_code(
             lib.ISC_SetLimitSwitchParams, self._serial_buffer,
@@ -396,8 +396,7 @@ class IntegratedStepperMotors(KinesisDevice):
         self, limitsSoftwareApproachPolicy: LimitsSoftwareApproachPolicy
     ):
         limitsSoftwareApproachPolicy = ffi.cast(
-            "MOT_LimitsSoftwareApproachPolicy",
-            limitsSoftwareApproachPolicy.value
+            "MOT_LimitsSoftwareApproachPolicy", limitsSoftwareApproachPolicy
         )
         lib.ISC_SetLimitsSoftwareApproachPolicy(
             self._serial_buffer, limitsSoftwareApproachPolicy
@@ -418,7 +417,7 @@ class IntegratedStepperMotors(KinesisDevice):
         )
 
     def set_button_params(self, params: ButtonParameters):
-        button_mode = ffi.cast("MOT_ButtonModes", params.button_mode.value)
+        button_mode = ffi.cast("MOT_ButtonModes", params.button_mode)
         check_error_code(
             lib.ISC_SetButtonParams, self._serial_buffer, button_mode,
             params.left_button_position, params.right_button_position
@@ -452,9 +451,9 @@ class IntegratedStepperMotors(KinesisDevice):
         )
 
     def set_homing_params(self, params: HomingParameters):
-        direction = ffi.cast("MOT_TravelDirection", params.direction.value)
+        direction = ffi.cast("MOT_TravelDirection", params.direction)
         limit_switch = ffi.cast(
-            "MOT_HomeLimitSwitchDirection", params.limit_switch.value
+            "MOT_HomeLimitSwitchDirection", params.limit_switch
         )
 
         p = ffi.new("MOT_HomingParameters *")
@@ -477,12 +476,12 @@ class IntegratedStepperMotors(KinesisDevice):
         )
 
     def set_jog_params(self, params: JogParameters):
-        mode = ffi.cast("MOT_JogModes", params.mode.value)
+        mode = ffi.cast("MOT_JogModes", params.mode)
         vel_params = ffi.new("MOT_VelocityParameters *")
         vel_params.minVelocity = params.vel_params.min_velocity
         vel_params.acceleration = params.vel_params.acceleration
         vel_params.maxVelocity = params.vel_params.max_velocity
-        stop_mode = ffi.cast("MOT_StopModes", params.stop_mode.value)
+        stop_mode = ffi.cast("MOT_StopModes", params.stop_mode)
 
         p = ffi.new("MOT_JogParameters *")
         p.mode = mode
