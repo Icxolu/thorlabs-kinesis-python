@@ -509,6 +509,7 @@ void __cdecl SC_ClearMessageQueue(char const *serialNo);
 /// <seealso cref="SC_MessageQueueSize(char const * serialNo)" />
 /// <seealso cref="SC_GetNextMessage(char const * serialNo, WORD * messageType, WORD * messageID, DWORD *messageData)" />
 /// <seealso cref="SC_WaitForMessage(char const * serialNo, WORD * messageType, WORD * messageID, DWORD *messageData)" />
+extern "Python" void message_callback();
 void __cdecl SC_RegisterMessageCallback(char const *serialNo, void (*functionPointer)());
 
 /// <summary> Gets the MessageQueue size. </summary>
